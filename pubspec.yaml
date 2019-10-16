@@ -1,6 +1,6 @@
 name: login
 description: Show content depending on whether or not the user is logged in. Simply provide two arguments - a Widget to display when logged in, one to display when not. Based on the firebase_auth and google_sign_in packages.
-version: 1.0.0
+version: 1.0.2
 authors:
   - Christian Lewis <ctjl96@gmail.com>
   - The Hercules Team <hello@hercules.dev>

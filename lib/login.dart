@@ -5,12 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-
 class Login extends StatefulWidget {
-  Login({
-    @required this.loggedIn,
-    @required this.loggedOut
-  });
+  Login({@required this.loggedIn, @required this.loggedOut});
 
   final Widget loggedIn;
   final Widget loggedOut;
@@ -28,23 +24,67 @@ class Login extends StatefulWidget {
     assert(user.uid == currentUser.uid);
   }
 
-  static Future<FirebaseUser> signInWithEmail(String email, String password) async {
+  static Future<FirebaseUser> signUpWithEmail(
+      {@required TextEditingController email,
+      @required TextEditingController password,
+      BuildContext context}) async {
+
+    final String _email = email.text.trim();
+    final String _password = password.text;
+
+    AuthResult authResult = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _email,
+        password: _password,
+    );
+
     try {
-      final AuthResult result = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      final FirebaseUser _user = authResult.user;
+      await _user.sendEmailVerification();
+      return _user;
+    } catch(e) {
+      debugPrint("Error creating user.");
+    }
+  }
+
+  static Future<void> resetPassword({@required TextEditingController email,
+    BuildContext context}) async {
+
+    if(context != null) showSnackbar(
+        msg: "Check your email for a password reset link.",
+        context: context,
+    );
+
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email.text.trim());
+  }
+
+  static Future<FirebaseUser> signInWithEmail(
+      {@required TextEditingController email,
+      @required TextEditingController password,
+      BuildContext context}) async {
+
+    try {
+      final String _email = email.text.trim();
+      final String _password = password.text;
+      final AuthResult result = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _email, password: _password);
       final FirebaseUser user = result.user;
 
       await checkLogin(user);
 
       return user;
-    } catch(e) {
+    } catch (e) {
       debugPrint("Error: $e");
+
+      if (context == null) return null;
+      error(email: email, password: password, context: context);
     }
   }
 
-  static Future<FirebaseUser> signInWithGoogle() async {
+  static Future<FirebaseUser> signInWithGoogle({BuildContext context}) async {
     try {
       final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -55,14 +95,34 @@ class Login extends StatefulWidget {
       await checkLogin(user);
 
       return user;
-    } catch(e) {
+    } catch (e) {
+      error(context: context);
       debugPrint("Error: $e");
     }
-
   }
 
-  static Future signOut() {
-    return FirebaseAuth.instance.signOut();
+  static signOut() {
+    FirebaseAuth.instance.signOut();
+  }
+
+  static Future error(
+      {String msg = "Login failed. Please try again.",
+      TextEditingController email,
+      TextEditingController password,
+      @required BuildContext context}) {
+    if (email != null) email.clear();
+    if (password != null) password.clear();
+
+    showSnackbar(msg: msg, context: context);
+  }
+
+  static Future showSnackbar({
+    @required BuildContext context,
+    String msg,
+    SnackBar snackBar}) {
+    Scaffold.of(context).showSnackBar(snackBar == null
+        ? SnackBar(content: Text(msg))
+        : snackBar);
   }
 
   @override
@@ -70,7 +130,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
   final FirebaseAuth _instance = FirebaseAuth.instance;
 
   @override
@@ -83,7 +142,7 @@ class _LoginState extends State<Login> {
           Login.isLoggedIn = firebaseUser != null;
         });
       });
-    } catch(e) {
+    } catch (e) {
       debugPrint("Error: $e");
     }
   }
@@ -109,8 +168,12 @@ class GoogleSignInButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image(image: AssetImage("assets/google.png", package: "login"), height: 18),
-            Container(width: 24.0,),
+            Image(
+                image: AssetImage("assets/google.png", package: "login"),
+                height: 18),
+            Container(
+              width: 24.0,
+            ),
             Text(
               'Sign in with Google',
               style: TextStyle(
