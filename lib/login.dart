@@ -15,53 +15,64 @@ class Login extends StatefulWidget {
   static var isLoggedIn = false;
 
   static Future<bool> checkLogin(FirebaseUser user) async {
-    assert(user.email != null);
-    assert(user.displayName != null);
-    assert(!user.isAnonymous);
-    assert(await user.getIdToken() != null);
+    try {
+      assert(user.email != null);
+      assert(user.displayName != null);
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
 
-    final FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
-    assert(user.uid == currentUser.uid);
+      final FirebaseUser currentUser =
+          await FirebaseAuth.instance.currentUser();
+      assert(user.uid == currentUser.uid);
+    } catch (e) {
+      debugPrint("Failure logging in.");
+      return false;
+    }
+
+    return true;
   }
 
   static Future<FirebaseUser> signUpWithEmail(
       {@required TextEditingController email,
       @required TextEditingController password,
       BuildContext context}) async {
-
     final String _email = email.text.trim();
     final String _password = password.text;
 
-    AuthResult authResult = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _email,
-        password: _password,
+    AuthResult authResult =
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: _email,
+      password: _password,
     );
 
     try {
       final FirebaseUser _user = authResult.user;
       await _user.sendEmailVerification();
       return _user;
-    } catch(e) {
+    } catch (e) {
       debugPrint("Error creating user.");
+      return null;
     }
   }
 
-  static Future<void> resetPassword({@required TextEditingController email,
-    BuildContext context}) async {
+  static Future<void> resetPassword(
+      {@required TextEditingController email, BuildContext context}) async {
+    if (email.text.isEmpty) return null;
 
-    if(context != null) showSnackbar(
+    if (context != null)
+      showSnackbar(
         msg: "Check your email for a password reset link.",
         context: context,
-    );
+      );
 
-    await FirebaseAuth.instance.sendPasswordResetEmail(email: email.text.trim());
+    await FirebaseAuth.instance
+        .sendPasswordResetEmail(email: email.text.trim());
   }
 
   static Future<FirebaseUser> signInWithEmail(
       {@required TextEditingController email,
       @required TextEditingController password,
       BuildContext context}) async {
-
     try {
       final String _email = email.text.trim();
       final String _password = password.text;
@@ -77,6 +88,7 @@ class Login extends StatefulWidget {
 
       if (context == null) return null;
       error(email: email, password: password, context: context);
+      return null;
     }
   }
 
@@ -96,8 +108,8 @@ class Login extends StatefulWidget {
 
       return user;
     } catch (e) {
-      error(context: context);
       debugPrint("Error: $e");
+      return error(context: context);
     }
   }
 
@@ -113,16 +125,14 @@ class Login extends StatefulWidget {
     if (email != null) email.clear();
     if (password != null) password.clear();
 
-    showSnackbar(msg: msg, context: context);
+    return showSnackbar(msg: msg, context: context);
   }
 
-  static Future showSnackbar({
-    @required BuildContext context,
-    String msg,
-    SnackBar snackBar}) {
-    Scaffold.of(context).showSnackBar(snackBar == null
-        ? SnackBar(content: Text(msg))
-        : snackBar);
+  static Future showSnackbar(
+      {@required BuildContext context, String msg, SnackBar snackBar}) {
+    Scaffold.of(context).showSnackBar(
+        snackBar == null ? SnackBar(content: Text(msg)) : snackBar);
+    return null;
   }
 
   @override
