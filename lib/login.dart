@@ -166,32 +166,35 @@ class _LoginState extends State<Login> {
 class GoogleSignInButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      elevation: 8,
-      splashColor: Colors.grey,
-      color: Colors.white,
-      onPressed: Login.signInWithGoogle,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image(
-                image: AssetImage("assets/google.png", package: "login"),
-                height: 18),
-            Container(
-              width: 24.0,
-            ),
-            Text(
-              'Sign in with Google',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
+    return Container(
+      height: 40.0,
+      child: RaisedButton(
+        elevation: 8,
+        splashColor: Colors.grey,
+        color: Colors.white,
+        onPressed: Login.signInWithGoogle,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image(
+                  image: AssetImage("assets/google.png", package: "login"),
+                  height: 18),
+              Container(
+                width: 24.0,
               ),
-            )
-          ],
+              Text(
+                'Sign in with Google',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
