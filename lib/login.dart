@@ -14,6 +14,21 @@ class Login extends StatefulWidget {
   static var currentUser;
   static var isLoggedIn = false;
 
+  static final TextEditingController _emailController = TextEditingController();
+  static final TextEditingController _passwordController = TextEditingController();
+
+  static final Widget email = TextField(
+      controller: _emailController,
+      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(labelText: "Email")
+  );
+
+  static final Widget password = TextField(
+      controller: _passwordController,
+      obscureText: true,
+      decoration: InputDecoration(labelText: "Password")
+  );
+
   static Future<bool> checkLogin(FirebaseUser user) async {
     try {
       assert(user.email != null);
@@ -55,9 +70,9 @@ class Login extends StatefulWidget {
     }
   }
 
-  static Future<void> resetPassword(
-      {@required TextEditingController email, BuildContext context}) async {
-    if (email.text.isEmpty) return null;
+  static Future<void> resetPassword({BuildContext context}) async {
+    if (_emailController.text.isEmpty) return null;
+    Navigator.of(context).pop();
 
     if (context != null)
       showSnackbar(
@@ -66,16 +81,13 @@ class Login extends StatefulWidget {
       );
 
     await FirebaseAuth.instance
-        .sendPasswordResetEmail(email: email.text.trim());
+        .sendPasswordResetEmail(email: _emailController.text.trim());
   }
 
-  static Future<FirebaseUser> signInWithEmail(
-      {@required TextEditingController email,
-      @required TextEditingController password,
-      BuildContext context}) async {
+  static Future<FirebaseUser> signInWithEmail({BuildContext context}) async {
     try {
-      final String _email = email.text.trim();
-      final String _password = password.text;
+      final String _email = _emailController.text.trim();
+      final String _password = _passwordController.text;
       final AuthResult result = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: _email, password: _password);
       final FirebaseUser user = result.user;
@@ -87,7 +99,7 @@ class Login extends StatefulWidget {
       debugPrint("Error: $e");
 
       if (context == null) return null;
-      error(email: email, password: password, context: context);
+      error(email: _emailController, password: _passwordController, context: context);
       return null;
     }
   }
