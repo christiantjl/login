@@ -1,6 +1,6 @@
 name: login
 description: Show content depending on whether or not the user is logged in. Simply provide two arguments - a Widget to display when logged in, one to display when not.
-version: 1.1.0
+version: 1.1.1
 authors:
   - Christian Lewis <ctjl96@gmail.com>
   - The Hercules Team <hello@hercules.dev>
@@ -24,3 +24,8 @@ dev_dependencies:
 flutter:
   assets:
     - assets/
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Medium.ttf
+          weight: 500

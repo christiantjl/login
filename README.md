@@ -11,7 +11,7 @@ The Login widget is meant to simplify the process of stateful content for logged
 Declaring a Login widget:  
 ```  
 Login(
-	loggedIn: myHomePage(), 
+    loggedIn: myHomePage(), 
 	loggedOut: myLoginForm(), 
 )
 ```
