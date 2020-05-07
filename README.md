@@ -30,7 +30,7 @@ For this specific case, the work has been done for you, and the package includes
 GoogleSignInButton()
 ```
 
-Effortless. You can initialize this with *no arguments*, as seen above. (Take notes, Mr. Sneath.)   All of the branding guidelines provided by Google have been incorporated into the widget.
+Effortless. You can initialize this with no arguments, as seen above. (Take notes, Mr. Sneath.)   All of the branding guidelines provided by Google have been incorporated into the widget.
 
 ![enter image description here](https://developers.google.com/identity/images/google_button_spec.png)
 
