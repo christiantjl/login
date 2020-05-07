@@ -1,6 +1,9 @@
 
-  # Login Widget  
+ # Login Widget  
  Show content depending on whether or not the user is logged in. Simply provide two arguments: A Widget to display when logged in, one to display when not.  The goal is to make setting up a login page and handling that process *much* less of a hassle, and I am shaming Google hardcore for not building *something* like this this for the core framework or the FlutterFire package.
+ 
+ ## IMPORTANT: This plugin requires Firebase to be enabled for your project.
+ Follow the directions [here](https://firebase.google.com/docs/flutter/setup) to add your google-services.json file and register your app with Firebase.
   
 *Relies on the firebase_auth and google_sign_in packages. This was written in about two hours to save time going forward, so pull requests are welcome if you can add to the package.*
   
@@ -12,7 +15,7 @@ Declaring a Login widget:
 ```  
 Login(
     loggedIn: myHomePage(), 
-	loggedOut: myLoginForm(), 
+    loggedOut: myLoginForm(), 
 )
 ```
 Yup. That's it.  
